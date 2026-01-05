@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercice de Comptage - Mathématiques</title>
+    <script src="https://plateforme.ikenas.com/asset-v1:ikenas+C_PC_TRC+2025_S1+type@asset+block@jschannel.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 95%;
+            width: 95%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .score-board {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .score-board h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .questions-container {
+            margin-bottom: 30px;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .question-card.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .question-card.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .question-text {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0 auto;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .answer-input {
+            width: 100%;
+            max-width: 200px;
+            padding: 15px 20px;
+            font-size: 24px;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+
+        .answer-input.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .answer-input.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .correct-answer {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-check:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+
+        .instructions strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .question-text {
+                font-size: 18px;
+            }
+
+            .answer-input {
+                max-width: 150px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍎 Exercice de Comptage 🍎</h1>
+        <div class="subtitle">Compte les objets et écris le nombre!</div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong>
+            Observe bien chaque image et compte les objets. Écris le nombre dans la case et clique sur "Vérifier" pour voir tes résultats!
+        </div>
+
+        <div class="score-board">
+            <h2>📊 Ton Score</h2>
+            <div class="score-value" id="scoreDisplay">0 / 5</div>
+            <div>Tentative: <span id="attemptsDisplay">0</span></div>
+        </div>
+
+        <div class="questions-container" id="questionsContainer"></div>
+
+        <div class="controls">
+            <button class="btn btn-check" id="checkBtn">✓ Vérifier mes réponses</button>
+            <button class="btn btn-reset" id="resetBtn">↻ Recommencer</button>
+        </div>
+    </div>
+
+    <script>
+        // Définition des questions avec images
+        const questions = [
+            {
+                id: 1,
+                question: "Combien de pommes vois-tu?",
+                imageSrc: "", // À remplir avec l'URL de l'image
+                imageAlt: "5 pommes rouges",
+                correctAnswer: 5
+            },
+            {
+                id: 2,
+                question: "Combien d'étoiles comptes-tu?",
+                imageSrc: "", // À remplir avec l'URL de l'image
+                imageAlt: "8 étoiles jaunes",
+                correctAnswer: 8
+            },
+            {
+                id: 3,
+                question: "Combien de ballons vois-tu?",
+                imageSrc: "", // À remplir avec l'URL de l'image
+                imageAlt: "3 ballons colorés",
+                correctAnswer: 3
+            },
+            {
+                id: 4,
+                question: "Combien de papillons comptes-tu?",
+                imageSrc: "", // À remplir avec l'URL de l'image
+                imageAlt: "7 papillons multicolores",
+                correctAnswer: 7
+            },
+            {
+                id: 5,
+                question: "Combien de fleurs vois-tu?",
+                imageSrc: "", // À remplir avec l'URL de l'image
+                imageAlt: "10 fleurs roses",
+                correctAnswer: 10
+            }
+        ];
+
+        let state = {
+            totalScore: 0,
+            totalQuestions: 5,
+            attempts: 0,
+            answers: {},
+            answersDetails: [],
+            checked: false
+        };
+
+        // JSChannel setup pour communication avec OpenEdX
+        let channel;
+        if (window.parent !== window) {
+            channel = Channel.build({
+                window: window.parent,
+                origin: "*",
+                scope: "JSInput"
+            });
+
+            channel.bind("getGrade", function(trans) {
+                return JSON.stringify(calculateGrade());
+            });
+
+            channel.bind("getState", function(trans) {
+                return JSON.stringify(state);
+            });
+
+            channel.bind("setState", function(trans, stateStr) {
+                try {
+                    state = JSON.parse(stateStr);
+                    restoreState();
+                    return JSON.stringify({ success: true });
+                } catch (e) {
+                    return JSON.stringify({ success: false, error: e.message });
+                }
+            });
+        }
+
+        // Objet global pour OpenEdX
+        window.MathsComptage = {
+            getGrade: function() {
+                return calculateGrade();
+            },
+            getState: function() {
+                return state;
+            },
+            setState: function(newState) {
+                state = newState;
+                restoreState();
+            }
+        };
+
+        // Initialisation
+        function init() {
+            renderQuestions();
+            updateScoreDisplay();
+            
+            document.getElementById('checkBtn').addEventListener('click', checkAnswers);
+            document.getElementById('resetBtn').addEventListener('click', resetExercise);
+        }
+
+        // Affichage des questions
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${q.id}`;
+
+                const userAnswer = state.answers[q.id] || '';
+                const isChecked = state.checked;
+                const isCorrect = parseInt(userAnswer) === q.correctAnswer;
+
+                if (isChecked) {
+                    card.className += isCorrect ? ' correct' : ' incorrect';
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <span class="question-number">${q.id}</span>
+                        <span class="question-text">${q.question}</span>
+                    </div>
+                    
+                    <div class="image-container">
+                        ${q.imageSrc ? 
+                            `<img src="${q.imageSrc}" alt="${q.imageAlt}" class="question-image">` :
+                            `<div class="image-placeholder">🖼️ ${q.imageAlt}</div>`
+                        }
+                    </div>
+                    
+                    <div class="input-wrapper">
+                        <input 
+                            type="number" 
+                            class="answer-input ${isChecked ? (isCorrect ? 'correct' : 'incorrect') : ''}" 
+                            id="input-${q.id}"
+                            value="${userAnswer}"
+                            min="0"
+                            max="20"
+                            placeholder="?"
+                            ${isChecked ? 'disabled' : ''}
+                        >
+                    </div>
+                    
+                    <div class="feedback ${isChecked ? 'show' : ''} ${isCorrect ? 'correct' : 'incorrect'}" id="feedback-${q.id}">
+                        ${isChecked ? (isCorrect ? 
+                            '✓ Bravo! C\'est correct!' : 
+                            `✗ Pas tout à fait... <div class="correct-answer">La bonne réponse est: ${q.correctAnswer}</div>`) : ''}
+                    </div>
+                `;
+
+                container.appendChild(card);
+
+                // Ajouter event listener pour sauvegarder la réponse
+                if (!isChecked) {
+                    const input = document.getElementById(`input-${q.id}`);
+                    input.addEventListener('input', (e) => {
+                        state.answers[q.id] = e.target.value;
+                    });
+                }
+            });
+        }
+
+        // Vérification des réponses
+        function checkAnswers() {
+            state.attempts++;
+            state.checked = true;
+            state.totalScore = 0;
+            state.answersDetails = [];
+
+            questions.forEach(q => {
+                const userAnswer = parseInt(state.answers[q.id]) || 0;
+                const isCorrect = userAnswer === q.correctAnswer;
+
+                if (isCorrect) {
+                    state.totalScore++;
+                }
+
+                state.answersDetails.push({
+                    question: q.question,
+                    imageDescription: q.imageAlt,
+                    userAnswer: userAnswer,
+                    correctAnswer: q.correctAnswer,
+                    isCorrect: isCorrect
+                });
+            });
+
+            renderQuestions();
+            updateScoreDisplay();
+
+            // Notification channel
+            if (channel) {
+                channel.notify({
+                    method: "update",
+                    params: state
+                });
+            }
+        }
+
+        // Réinitialisation
+        function resetExercise() {
+            state = {
+                totalScore: 0,
+                totalQuestions: 5,
+                attempts: 0,
+                answers: {},
+                answersDetails: [],
+                checked: false
+            };
+
+            renderQuestions();
+            updateScoreDisplay();
+        }
+
+        // Restauration de l'état
+        function restoreState() {
+            renderQuestions();
+            updateScoreDisplay();
+        }
+
+        // Mise à jour de l'affichage du score
+        function updateScoreDisplay() {
+            document.getElementById('scoreDisplay').textContent = `${state.totalScore} / ${state.totalQuestions}`;
+            document.getElementById('attemptsDisplay').textContent = state.attempts;
+        }
+
+        // Calcul de la note
+        function calculateGrade() {
+            if (state.totalQuestions === 0) return 0;
+            return state.totalScore / state.totalQuestions;
+        }
+
+        // Démarrage
+        init();
+    </script>
+</body>
+</html>
