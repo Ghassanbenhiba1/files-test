@@ -549,5 +549,25 @@
         // Démarrage
         init();
     </script>
+    <script>
+function sendHeight() {
+  const height = document.documentElement.scrollHeight;
+  window.parent.postMessage(
+    {
+      type: "iframe-height",
+      height: height
+    },
+    "*"
+  );
+}
+
+window.addEventListener("load", sendHeight);
+window.addEventListener("resize", sendHeight);
+
+// si ton contenu change dynamiquement
+setInterval(sendHeight, 500);
+</script>
+
 </body>
 </html>
+
